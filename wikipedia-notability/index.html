@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Notability Quiz | Could You Get a Wikipedia Page?</title>
+    <meta name="description" content="Assess your likelihood of getting a Wikipedia page approved. Based on Wikipedia's actual notability guidelines and editorial criteria.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #222230;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --wiki-blue: #3366cc;
+            --wiki-blue-dim: #2a5ab8;
+            --cyan: #7dd3fc;
+            --coral: #ff6b6b;
+            --sage: #a8e6cf;
+            --amber: #fbbf24;
+            --violet: #a78bfa;
+            --grid-line: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.6;
+        }
+
+        .shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--wiki-blue);
+            top: -100px;
+            right: -200px;
+            animation: float1 25s ease-in-out infinite;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--violet);
+            bottom: 20%;
+            left: -150px;
+            animation: float2 30s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 40px) scale(1.05); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -30px) scale(0.95); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 16px 0;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 28px;
+            opacity: 0.9;
+        }
+
+        .header-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .header-link:hover {
+            color: var(--wiki-blue);
+        }
+
+        .hero {
+            padding-top: 140px;
+            padding-bottom: 60px;
+            text-align: center;
+        }
+
+        .wiki-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 32px;
+            background: linear-gradient(135deg, var(--wiki-blue), var(--violet));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--wiki-blue), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .context-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 48px 0;
+            text-align: left;
+        }
+
+        .context-box h2 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            color: var(--wiki-blue);
+        }
+
+        .context-box p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+
+        .context-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .context-box strong {
+            color: var(--text-primary);
+        }
+
+        .context-box ul {
+            color: var(--text-secondary);
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .context-box li {
+            margin-bottom: 8px;
+        }
+
+        .quiz-section {
+            padding: 60px 0;
+        }
+
+        .quiz-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .quiz-card:hover {
+            border-color: rgba(51, 102, 204, 0.3);
+        }
+
+        .quiz-card.answered {
+            border-color: var(--wiki-blue);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .question-num {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--wiki-blue);
+            background: rgba(51, 102, 204, 0.15);
+            padding: 6px 12px;
+            border-radius: 100px;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .question-help {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--wiki-blue);
+            color: var(--text-primary);
+            background: rgba(51, 102, 204, 0.1);
+        }
+
+        .option-btn.selected {
+            border-color: var(--wiki-blue);
+            background: var(--wiki-blue);
+            color: white;
+        }
+
+        .option-score {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .option-btn.selected .option-score {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .results-panel {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            text-align: center;
+            margin-top: 40px;
+            transition: all 0.3s;
+        }
+
+        .results-panel.show-result {
+            border-color: var(--wiki-blue);
+        }
+
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 4px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            transition: all 0.3s;
+        }
+
+        .score-circle.low { border-color: var(--coral); }
+        .score-circle.medium { border-color: var(--amber); }
+        .score-circle.high { border-color: var(--sage); }
+
+        .score-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-number.low { color: var(--coral); }
+        .score-number.medium { color: var(--amber); }
+        .score-number.high { color: var(--sage); }
+
+        .score-max {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .result-badge {
+            display: inline-block;
+            padding: 12px 32px;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .result-badge.low {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--coral);
+        }
+
+        .result-badge.medium {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--amber);
+        }
+
+        .result-badge.high {
+            background: rgba(168, 230, 207, 0.15);
+            color: var(--sage);
+        }
+
+        .result-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .result-desc {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
+        }
+
+        .result-tips {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: left;
+            margin-top: 32px;
+        }
+
+        .result-tips h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--wiki-blue);
+        }
+
+        .result-tips ul {
+            color: var(--text-secondary);
+            padding-left: 20px;
+        }
+
+        .result-tips li {
+            margin-bottom: 12px;
+        }
+
+        .waiting-message {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-card);
+            border-radius: 3px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--wiki-blue), var(--violet));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .disclaimer {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .disclaimer strong {
+            color: var(--amber);
+        }
+
+        footer {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        .footer-logo {
+            height: 24px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-card {
+                padding: 24px;
+            }
+            .results-panel {
+                padding: 32px 24px;
+            }
+            .option-btn {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .option-score {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+
+    <header>
+        <div class="container">
+            <img src="assets/logo.png" alt="Crawford McMillan" class="logo">
+            <a href="https://crawfordmcmillan.com" class="header-link">crawfordmcmillan.com</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="wiki-icon">W</div>
+                <h1>Could You Get a <span class="highlight">Wikipedia</span> Page?</h1>
+                <p class="subtitle">Answer 8 questions to assess your likelihood of meeting Wikipedia's notability guidelines</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="context-box">
+                    <h2>Before You Start</h2>
+                    <p>Wikipedia has strict notability requirements. <strong>Most people and companies do not qualify.</strong> This is not a personal judgment. It reflects Wikipedia's mission to be an encyclopedia of verifiable, notable subjects rather than a directory of everyone and everything.</p>
+                    <p>The core requirement is simple but demanding: <strong>significant coverage in multiple reliable, independent sources.</strong></p>
+                    <p>What counts:</p>
+                    <ul>
+                        <li>Feature articles, profiles, or in-depth coverage in newspapers, magazines, or books</li>
+                        <li>Coverage from multiple unrelated publications (not syndicated content)</li>
+                        <li>Sources with editorial oversight and fact-checking</li>
+                    </ul>
+                    <p>What does not count:</p>
+                    <ul>
+                        <li>Press releases (even if republished by news sites)</li>
+                        <li>Your own website, social media, or marketing materials</li>
+                        <li>Brief mentions, directory listings, or event announcements</li>
+                        <li>Interviews where you talk about yourself</li>
+                    </ul>
+                    <p>Answer honestly. This quiz will give you a realistic assessment based on Wikipedia's actual editorial criteria.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quiz-section">
+            <div class="container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="quiz-card" data-question="1">
+                    <div class="question-header">
+                        <span class="question-num">Q1</span>
+                        <div>
+                            <div class="question-text">What type of subject is this Wikipedia page for?</div>
+                            <div class="question-help">Companies and commercial entities face stricter standards than individuals</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>Individual person (not primarily known for business ownership)</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>Academic, researcher, or scholar</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>Non-profit organization or public institution</span>
+                        </button>
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>Commercial company, startup, or business</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="2">
+                    <div class="question-header">
+                        <span class="question-num">Q2</span>
+                        <div>
+                            <div class="question-text">How many independent publications have written about this subject at length?</div>
+                            <div class="question-help">Count only publications unaffiliated with the subject. Multiple articles from the same publication count as one.</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>None, or only 1 publication</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>2-3 independent publications</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>4-6 independent publications</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>7+ independent publications</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="3">
+                    <div class="question-header">
+                        <span class="question-num">Q3</span>
+                        <div>
+                            <div class="question-text">What is the highest quality source that has covered this subject?</div>
+                            <div class="question-help">Consider the most prestigious/reliable publication, not the most recent</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>Blogs, social media, or self-published sources only</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>Trade publications or industry-specific media</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>Regional newspapers or established online publications</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>Major national/international media (NYT, BBC, WSJ, etc.) or academic journals</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="4">
+                    <div class="question-header">
+                        <span class="question-num">Q4</span>
+                        <div>
+                            <div class="question-text">What type of coverage has the subject received?</div>
+                            <div class="question-help">Wikipedia requires "significant coverage" meaning in-depth treatment, not just mentions</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>Brief mentions, listings, or passing references only</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>A few paragraphs within larger articles about other topics</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>Dedicated articles or substantial profiles focused on the subject</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>Multiple feature-length articles, book chapters, or documentary coverage</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="5">
+                    <div class="question-header">
+                        <span class="question-num">Q5</span>
+                        <div>
+                            <div class="question-text">What is the geographic reach of the coverage?</div>
+                            <div class="question-help">For companies especially, Wikipedia requires coverage beyond local media</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>Local media only (small-town newspapers, local TV)</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>Regional media (state/province level publications)</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>National media coverage</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>International media coverage</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="6">
+                    <div class="question-header">
+                        <span class="question-num">Q6</span>
+                        <div>
+                            <div class="question-text">How long has the subject been receiving media coverage?</div>
+                            <div class="question-help">Sustained coverage over time is stronger than a recent burst of attention</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>No significant coverage, or only in the past few months</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>Coverage within the past 1-2 years</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>Sustained coverage over 3-5 years</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>Coverage spanning 5+ years or historically significant</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="7">
+                    <div class="question-header">
+                        <span class="question-num">Q7</span>
+                        <div>
+                            <div class="question-text">Has the subject received notable awards, recognition, or achieved significant milestones?</div>
+                            <div class="question-help">Major industry awards, academic honors, or record achievements can establish presumed notability</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>No notable awards or recognition</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>Industry or local awards, professional certifications</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>National awards, significant competitive achievements, or notable firsts</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>Major international awards, hall of fame inductions, or historic achievements</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="quiz-card" data-question="8">
+                    <div class="question-header">
+                        <span class="question-num">Q8</span>
+                        <div>
+                            <div class="question-text">Are the sources truly independent of the subject?</div>
+                            <div class="question-help">Press releases republished by media do not count. Paid placements do not count. Interviews where the subject promotes themselves do not count.</div>
+                        </div>
+                    </div>
+                    <div class="options-grid">
+                        <button class="option-btn" data-value="0">
+                            <span class="option-score">+0</span>
+                            <span>Most coverage originates from the subject (press releases, paid content, self-promotion)</span>
+                        </button>
+                        <button class="option-btn" data-value="1">
+                            <span class="option-score">+1</span>
+                            <span>Mixed - some independent coverage but also significant promotional content</span>
+                        </button>
+                        <button class="option-btn" data-value="2">
+                            <span class="option-score">+2</span>
+                            <span>Mostly independent editorial coverage, minimal promotional content</span>
+                        </button>
+                        <button class="option-btn" data-value="3">
+                            <span class="option-score">+3</span>
+                            <span>All coverage is clearly independent editorial work with no promotional origin</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="results-panel" id="resultsPanel">
+                    <div class="score-circle" id="scoreCircle">
+                        <div class="score-number" id="scoreNumber">-</div>
+                        <div class="score-max">of 23</div>
+                    </div>
+                    <div class="waiting-message" id="waitingMessage">Answer all 8 questions to see your result</div>
+                    <div id="resultContent" style="display: none;">
+                        <div class="result-badge" id="resultBadge">-</div>
+                        <div class="result-title" id="resultTitle">-</div>
+                        <div class="result-desc" id="resultDesc">-</div>
+                        <div class="result-tips" id="resultTips"></div>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <strong>Disclaimer:</strong> This quiz provides a general assessment based on Wikipedia's published notability guidelines. It is not a guarantee of approval or rejection. Wikipedia editorial decisions are made by volunteer editors who interpret guidelines case by case. Even high scores may result in rejection, and some edge cases with lower scores may succeed.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p class="footer-text">Based on Wikipedia's General Notability Guideline (WP:GNG) and subject-specific notability guidelines. Last reviewed February 2026.</p>
+            <img src="assets/logo.png" alt="Crawford McMillan" class="footer-logo">
+        </div>
+    </footer>
+
+    <script>
+        const scores = {};
+        const totalQuestions = 8;
+        const maxScore = 23;
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.quiz-card');
+                const question = card.dataset.question;
+                const value = parseInt(this.dataset.value);
+
+                card.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                card.classList.add('answered');
+
+                scores[question] = value;
+                updateResults();
+            });
+        });
+
+        function updateResults() {
+            const answered = Object.keys(scores).length;
+            const total = Object.values(scores).reduce((a, b) => a + b, 0);
+
+            // Update progress bar
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${(answered / totalQuestions) * 100}%`;
+
+            // Update score display
+            const scoreNumber = document.getElementById('scoreNumber');
+            const scoreCircle = document.getElementById('scoreCircle');
+            const waitingMessage = document.getElementById('waitingMessage');
+            const resultContent = document.getElementById('resultContent');
+
+            scoreNumber.textContent = total;
+
+            if (answered < totalQuestions) {
+                waitingMessage.textContent = `${totalQuestions - answered} question${totalQuestions - answered > 1 ? 's' : ''} remaining`;
+                waitingMessage.style.display = 'block';
+                resultContent.style.display = 'none';
+                scoreCircle.className = 'score-circle';
+                scoreNumber.className = 'score-number';
+            } else {
+                waitingMessage.style.display = 'none';
+                resultContent.style.display = 'block';
+                document.getElementById('resultsPanel').classList.add('show-result');
+
+                const resultBadge = document.getElementById('resultBadge');
+                const resultTitle = document.getElementById('resultTitle');
+                const resultDesc = document.getElementById('resultDesc');
+                const resultTips = document.getElementById('resultTips');
+
+                let level, title, desc, tips;
+
+                if (total >= 17) {
+                    level = 'high';
+                    title = 'High Likelihood';
+                    desc = 'Based on your answers, you appear to meet Wikipedia\'s notability requirements. Multiple independent, reliable sources with significant coverage is exactly what Wikipedia editors look for. Consider creating a well-sourced draft article.';
+                    tips = `
+                        <h3>Next Steps</h3>
+                        <ul>
+                            <li>Gather all your sources and verify they are truly independent</li>
+                            <li>Write in neutral, encyclopedic tone - avoid promotional language entirely</li>
+                            <li>Focus on verifiable facts, not claims or opinions</li>
+                            <li>Use Wikipedia's Articles for Creation process if you have any conflict of interest</li>
+                            <li>Consider hiring an experienced Wikipedia editor to review before submission</li>
+                        </ul>
+                    `;
+                } else if (total >= 11) {
+                    level = 'medium';
+                    title = 'Moderate Likelihood';
+                    desc = 'You have some foundation for notability, but there are gaps. Wikipedia editors may challenge the article or request additional sources. Success depends on the quality and independence of your existing coverage.';
+                    tips = `
+                        <h3>How to Improve Your Chances</h3>
+                        <ul>
+                            <li>Focus on obtaining more independent media coverage before attempting Wikipedia</li>
+                            <li>Prioritize coverage in higher-profile publications with wider reach</li>
+                            <li>Look for feature articles or profiles, not just mentions</li>
+                            <li>Ensure any existing coverage is clearly editorial, not promotional</li>
+                            <li>Consider waiting until you have stronger evidence of notability</li>
+                            <li>If you proceed, be prepared for the article to be challenged or deleted</li>
+                        </ul>
+                    `;
+                } else {
+                    level = 'low';
+                    title = 'Low Likelihood';
+                    desc = 'Based on your answers, the subject likely does not meet Wikipedia\'s notability requirements at this time. This is common - most people and companies do not qualify. Attempting to create an article now would likely result in rejection or deletion.';
+                    tips = `
+                        <h3>What This Means</h3>
+                        <ul>
+                            <li>Wikipedia is not a directory of all businesses or people - it requires demonstrated notability</li>
+                            <li>Focus on building genuine media coverage through newsworthy activities</li>
+                            <li>Press releases and paid placements will not help - you need independent editorial coverage</li>
+                            <li>Consider revisiting in 1-2 years if coverage improves substantially</li>
+                            <li>Attempting to create an article now could result in a "blacklist" making future attempts harder</li>
+                            <li>Your LinkedIn profile, company website, and other platforms may be more appropriate venues</li>
+                        </ul>
+                    `;
+                }
+
+                scoreCircle.className = `score-circle ${level}`;
+                scoreNumber.className = `score-number ${level}`;
+                resultBadge.className = `result-badge ${level}`;
+                resultBadge.textContent = level === 'high' ? 'Likely Notable' : level === 'medium' ? 'Possibly Notable' : 'Likely Not Notable';
+                resultTitle.textContent = title;
+                resultDesc.textContent = desc;
+                resultTips.innerHTML = tips;
+
+                // Scroll to results
+                document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    </script>
+</body>
+</html>
