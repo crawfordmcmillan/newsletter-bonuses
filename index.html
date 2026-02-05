@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Data Problem Private Equity Cannot Afford to Ignore | Crawford McMillan</title>
+    <meta name="description" content="How data fragmentation, manual processes, and due diligence gaps are eroding portfolio value in 2026. A Crawford McMillan whitepaper.">
+    <meta property="og:title" content="The Data Problem Private Equity Cannot Afford to Ignore">
+    <meta property="og:description" content="75% of PE firms can't consolidate portfolio data. 70-90% of M&A deals fail expectations. Here's what to do about it.">
+    <meta property="og:type" content="article">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #070c14;
+            --bg-secondary: #0a1628;
+            --text-primary: #f0f7ff;
+            --text-secondary: #8ba4c4;
+            --text-muted: #4a6585;
+            --cyan: #7dd3fc;
+            --cyan-glow: rgba(125, 211, 252, 0.4);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.3);
+            --navy: #1e3a5a;
+            --orange: #f59e0b;
+            --teal: #14b8a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 17px;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--cyan);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease, border-color 0.2s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--blue);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .cursor.hover {
+            transform: scale(2);
+            border-color: var(--blue);
+        }
+
+        /* Animated grain overlay */
+        .grain {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+            animation: grain 0.5s steps(1) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(5%, 5%); }
+            30% { transform: translate(-5%, 5%); }
+            40% { transform: translate(5%, -5%); }
+            50% { transform: translate(-5%, 0); }
+            60% { transform: translate(5%, 0); }
+            70% { transform: translate(0, 5%); }
+            80% { transform: translate(0, -5%); }
+            90% { transform: translate(5%, 5%); }
+        }
+
+        /* Animated blob backgrounds */
+        .blob-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, var(--cyan-glow), transparent);
+            top: -200px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--blue-glow), transparent);
+            bottom: 20%;
+            left: -150px;
+            animation-delay: -7s;
+        }
+
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(255, 107, 0, 0.2), transparent);
+            top: 50%;
+            right: 10%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        /* Grid lines overlay */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 80px 80px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            mix-blend-mode: difference;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .nav-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .nav-tag {
+            font-size: 0.75rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            padding: 0.4rem 1rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 100px;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--blue), var(--orange));
+            z-index: 101;
+            transition: width 0.1s ease;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 3rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 1.25rem;
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .hero-tag::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 2rem;
+            height: 2px;
+            background: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan);
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 400;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            max-width: 1000px;
+        }
+
+        .hero h1 .word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(60px) rotateX(-40deg);
+            animation: wordReveal 0.8s ease forwards;
+            transform-origin: top;
+        }
+
+        @keyframes wordReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        .hero h1 .highlight {
+            color: var(--cyan);
+            text-shadow: 0 0 40px var(--cyan-glow);
+        }
+
+        .hero h1 .circled {
+            position: relative;
+            color: var(--cyan);
+            text-shadow: 0 0 40px var(--cyan-glow);
+        }
+
+        .hero h1 .circled::after {
+            content: '';
+            position: absolute;
+            top: -0.15em;
+            left: -0.2em;
+            right: -0.2em;
+            bottom: -0.15em;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 50'%3E%3Cellipse cx='60' cy='25' rx='55' ry='20' stroke='%237dd3fc' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-dasharray='2,4' transform='rotate(-2 60 25)'/%3E%3C/svg%3E") no-repeat center;
+            background-size: 100% 100%;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-meta span::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--blue);
+        }
+
+        /* Floating stats */
+        .floating-stat {
+            position: absolute;
+            background: rgba(10, 10, 16, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            animation: floatStat 6s ease-in-out infinite;
+        }
+
+        .floating-stat-1 {
+            top: 15%;
+            right: 5%;
+            animation-delay: 0s;
+        }
+
+        .floating-stat-2 {
+            bottom: 25%;
+            right: 15%;
+            animation-delay: -2s;
+        }
+
+        @keyframes floatStat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .floating-stat .number {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .floating-stat .number.cyan { color: var(--cyan); text-shadow: 0 0 30px var(--cyan-glow); }
+        .floating-stat .number.blue { color: var(--blue); text-shadow: 0 0 30px var(--blue-glow); }
+        .floating-stat .number.orange { color: var(--orange); }
+
+        .floating-stat .label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            max-width: 140px;
+        }
+
+        /* Stats section */
+        .stats-section {
+            padding: 8rem 3rem;
+            position: relative;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-card {
+            position: relative;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--blue));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(0, 240, 255, 0.1);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-number {
+            font-family: 'Instrument Serif', serif;
+            font-size: 4rem;
+            font-weight: 400;
+            line-height: 1;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .stat-number::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cellipse cx='50' cy='10' rx='48' ry='8' stroke='%233b82f6' stroke-width='2' fill='none' stroke-dasharray='5,5'/%3E%3C/svg%3E") no-repeat center;
+            background-size: contain;
+            opacity: 0.6;
+        }
+
+        .stat-card:nth-child(1) .stat-number { color: var(--orange); }
+        .stat-card:nth-child(2) .stat-number { color: var(--cyan); }
+        .stat-card:nth-child(3) .stat-number { color: var(--blue); }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Content */
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 3rem 8rem;
+            position: relative;
+        }
+
+        /* Sticky TOC */
+        .toc {
+            position: fixed;
+            left: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+        }
+
+        .toc-line {
+            width: 2px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            position: relative;
+            margin-left: 4px;
+        }
+
+        .toc-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, var(--cyan), var(--blue));
+            transition: height 0.3s ease;
+        }
+
+        .toc-dots {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .toc-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .toc-dot:hover,
+        .toc-dot.active {
+            background: var(--cyan);
+            box-shadow: 0 0 15px var(--cyan);
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 1400px) {
+            .toc { display: none; }
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 6rem;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.8rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            padding-top: 2rem;
+            letter-spacing: -0.02em;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyan), var(--blue));
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin: 3rem 0 1.5rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Data highlights */
+        .data-highlight {
+            display: inline-block;
+            position: relative;
+            color: var(--cyan);
+            font-weight: 600;
+            padding: 0 0.3rem;
+        }
+
+        .data-highlight::before {
+            content: '';
+            position: absolute;
+            inset: -2px -6px;
+            background: rgba(0, 240, 255, 0.1);
+            border-radius: 4px;
+            z-index: -1;
+        }
+
+        /* Glass cards */
+        .glass-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(0, 240, 255, 0.03));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            transform: translateX(10px);
+            box-shadow:
+                -20px 0 60px rgba(0, 240, 255, 0.1),
+                0 0 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .glass-card h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .glass-card h4::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--blue);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--blue);
+        }
+
+        /* Pull quotes */
+        .pull-quote {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            color: var(--text-primary);
+            margin: 4rem 0;
+            padding: 2rem 0 2rem 3rem;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .pull-quote::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--cyan), var(--blue), var(--orange));
+            border-radius: 2px;
+        }
+
+        .pull-quote::after {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 40px;
+            font-size: 8rem;
+            color: var(--cyan);
+            opacity: 0.1;
+            font-family: 'Instrument Serif', serif;
+            line-height: 1;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 2rem 0;
+            padding-left: 0;
+            list-style: none;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            border-radius: 2px;
+            transform: rotate(45deg);
+        }
+
+        /* Hierarchy framework */
+        .hierarchy {
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .hierarchy::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--cyan), var(--blue), var(--orange), var(--teal));
+        }
+
+        .hierarchy-level {
+            position: relative;
+            margin-left: 60px;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+        }
+
+        .hierarchy-level::before {
+            content: '';
+            position: absolute;
+            left: -38px;
+            top: 2rem;
+            width: 16px;
+            height: 2px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .hierarchy-level:hover {
+            transform: translateX(10px);
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .level-number {
+            position: absolute;
+            left: -60px;
+            top: 1.5rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            border: 2px solid;
+            border-radius: 50%;
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+        }
+
+        .hierarchy-level:nth-child(1) .level-number { border-color: var(--cyan); color: var(--cyan); }
+        .hierarchy-level:nth-child(2) .level-number { border-color: var(--blue); color: var(--blue); }
+        .hierarchy-level:nth-child(3) .level-number { border-color: var(--orange); color: var(--orange); }
+        .hierarchy-level:nth-child(4) .level-number { border-color: var(--teal); color: var(--teal); }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .level-title {
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+        }
+
+        .level-timeline {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 0.4rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 100px;
+        }
+
+        .level-content {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .level-content p {
+            margin-bottom: 0.75rem;
+        }
+
+        /* CTA section */
+        .cta-section {
+            position: relative;
+            padding: 5rem;
+            margin-top: 6rem;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.05), rgba(255, 0, 170, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--cyan-glow), transparent 70%);
+            filter: blur(40px);
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--blue-glow), transparent 70%);
+            filter: blur(40px);
+        }
+
+        .cta-section h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            color: var(--bg-primary);
+            padding: 1.2rem 2.5rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: var(--bg-primary);
+            border-radius: 100px;
+            z-index: -1;
+            transition: opacity 0.3s;
+        }
+
+        .cta-button span {
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--cyan-glow), 0 0 60px var(--blue-glow);
+        }
+
+        .cta-button:hover::before {
+            opacity: 0;
+        }
+
+        .cta-button:hover span {
+            -webkit-text-fill-color: var(--bg-primary);
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4rem 3rem;
+            text-align: center;
+        }
+
+        .footer-logo-img {
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .footer-tagline {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--cyan);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            body { cursor: auto; }
+            .cursor, .cursor-dot { display: none; }
+
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.5rem, 10vw, 4rem);
+            }
+
+            .floating-stat {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .stat-card {
+                padding: 2rem;
+            }
+
+            .stat-number {
+                font-size: 3rem;
+            }
+
+            .content {
+                padding: 2rem 1.5rem 4rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .pull-quote {
+                font-size: 1.4rem;
+                padding-left: 2rem;
+            }
+
+            .hierarchy::before {
+                left: 15px;
+            }
+
+            .hierarchy-level {
+                margin-left: 45px;
+                padding: 1.5rem;
+            }
+
+            .level-number {
+                left: -45px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .hierarchy-level::before {
+                left: -28px;
+                width: 10px;
+            }
+
+            .cta-section {
+                padding: 3rem 1.5rem;
+            }
+
+            .cta-section h3 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Link styling for content */
+        a:not(.nav-logo):not(.cta-button):not(.footer-links a) {
+            color: var(--cyan);
+            text-decoration: none;
+            position: relative;
+        }
+
+        a:not(.nav-logo):not(.cta-button):not(.footer-links a)::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--cyan);
+            transition: width 0.3s;
+        }
+
+        a:not(.nav-logo):not(.cta-button):not(.footer-links a):hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-dot"></div>
+    <div class="grain"></div>
+    <div class="grid-lines"></div>
+
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="progress-bar" id="progress"></div>
+
+    <nav class="nav">
+        <a href="https://crawfordmcmillan.com" class="nav-logo">
+            <img src="assets/logo.png" alt="Crawford McMillan" height="32">
+        </a>
+        <span class="nav-tag">Whitepaper</span>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <span class="hero-tag">2026 Whitepaper</span>
+            <h1>
+                <span class="word" style="animation-delay: 0.1s">The</span>
+                <span class="word" style="animation-delay: 0.15s">Data</span>
+                <span class="word" style="animation-delay: 0.2s">Problem</span>
+                <span class="word" style="animation-delay: 0.25s">Private</span>
+                <span class="word" style="animation-delay: 0.3s">Equity</span>
+                <span class="word highlight" style="animation-delay: 0.35s">Cannot</span>
+                <span class="word" style="animation-delay: 0.4s">Afford</span>
+                <span class="word" style="animation-delay: 0.45s">to</span>
+                <span class="word" style="animation-delay: 0.5s">Ignore</span>
+            </h1>
+            <p class="hero-subtitle">How data fragmentation, manual processes, and due diligence gaps are eroding portfolio value in 2026</p>
+            <div class="hero-meta">
+                <span>By Graeme Crawford</span>
+                <span>12 min read</span>
+                <span>February 2026</span>
+            </div>
+        </div>
+
+        <div class="floating-stat floating-stat-1">
+            <div class="number orange">75%</div>
+            <div class="label">of PE firms cannot consolidate portfolio data</div>
+        </div>
+        <div class="floating-stat floating-stat-2">
+            <div class="number blue">70-90%</div>
+            <div class="label">of M&A deals fail to meet expectations</div>
+        </div>
+    </header>
+
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">75%</div>
+                <div class="stat-label">of PE firms cannot consolidate data across their portfolio companies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">54%</div>
+                <div class="stat-label">still collect portfolio data via email attachments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">70-90%</div>
+                <div class="stat-label">of M&A deals fail to meet expectations</div>
+            </div>
+        </div>
+    </section>
+
+    <nav class="toc">
+        <div class="toc-line">
+            <div class="toc-progress" id="toc-progress"></div>
+            <div class="toc-dots">
+                <div class="toc-dot" data-section="executive-summary"></div>
+                <div class="toc-dot" data-section="2026-context"></div>
+                <div class="toc-dot" data-section="portfolio-visibility"></div>
+                <div class="toc-dot" data-section="due-diligence"></div>
+                <div class="toc-dot" data-section="exit-readiness"></div>
+                <div class="toc-dot" data-section="cost-of-inaction"></div>
+                <div class="toc-dot" data-section="framework"></div>
+                <div class="toc-dot" data-section="conclusion"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="content">
+        <section id="executive-summary">
+            <h2>Executive Summary</h2>
+            <p>Private equity is facing a data crisis that most firms only discover when it costs them money.</p>
+            <p>The numbers tell the story: <span class="data-highlight">75%</span> of PE firms cannot consolidate data across their portfolio companies. <span class="data-highlight">54%</span> still collect portfolio data via email attachments. And <span class="data-highlight">70-90%</span> of M&A deals fail to meet expectations, with flawed due diligence frequently cited as the cause.</p>
+            <p>In 2026, these problems are no longer tolerable. Exit values dropped 21.2% year over year while exit volume increased. LPs are scrutinizing returns more carefully. AI initiatives are stalling because the underlying data is not ready. And buyers are conducting more rigorous diligence than ever before.</p>
+            <p>This whitepaper examines the three data problems most likely to erode portfolio value, quantifies the cost of inaction, and provides a practical framework for PE operating partners and portfolio company leadership teams to address them.</p>
+        </section>
+
+        <section id="2026-context">
+            <h2>The 2026 Context</h2>
+
+            <h3>The Exit Backlog Is Forcing Harder Conversations</h3>
+            <p>Global private equity exits rose 5.4% in 2025 to 3,149 deals. But the total value of those deals declined 21.2% year over year to $412.1 billion. Firms are exiting more companies at lower valuations.</p>
+            <p>This dynamic creates pressure in both directions. Sellers need to demonstrate value more convincingly. Buyers are looking harder for reasons to negotiate price down.</p>
+
+            <div class="pull-quote">
+                Data problems that were acceptable during a frothy market become deal-breakers when buyers have leverage.
+            </div>
+
+            <h3>LP Pressure Is Increasing</h3>
+            <p>Fundraising conditions remain constrained. Limited partners continue to manage denominator pressure and slower distribution cycles. Commitments are being channeled more selectively toward managers with established track records.</p>
+            <p>Performance dispersion between top-quartile and bottom-quartile managers is widening. The managers who can demonstrate clear value creation with defensible metrics will attract capital. Those who cannot will struggle.</p>
+
+            <h3>AI Readiness Requires Data Readiness</h3>
+            <p><span class="data-highlight">51%</span> of PE firms say they are seeking more data scientists and AI experts. The industry recognizes that data and analytics are essential competitive tools.</p>
+            <p>But AI cannot run on broken data. Every firm exploring AI-driven portfolio optimization, predictive analytics, or automated reporting discovers the same prerequisite: the underlying data must be clean, consolidated, and accessible.</p>
+            <p>The firms that fix their data infrastructure now will be positioned to deploy AI capabilities. Those that do not will watch competitors gain an operational advantage.</p>
+        </section>
+
+        <section id="portfolio-visibility">
+            <h2>Problem One: Portfolio Visibility Gaps</h2>
+
+            <h3>The 75% Problem</h3>
+            <p>According to research on PE data management, <span class="data-highlight">75%</span> of firms have highlighted the inability to consolidate siloed data systems as a major business challenge.</p>
+            <p>Portfolio companies typically run different ERP systems, different CRMs, different accounting platforms. Each system defines metrics differently. Each produces reports in different formats. Each requires manual effort to extract and normalize data.</p>
+            <p>The result: operating partners cannot get a unified view of portfolio performance without significant manual work.</p>
+
+            <h3>The Email Attachment Economy</h3>
+            <p><span class="data-highlight">54%</span> of PE portfolio company respondents use email with an attachment to collect data and respond to requests from their sponsors.</p>
+
+            <div class="glass-card">
+                <h4>The Typical Data Flow</h4>
+                <ol>
+                    <li>An operating partner requests revenue figures</li>
+                    <li>A portfolio company CFO exports data from their system into Excel</li>
+                    <li>They email the spreadsheet</li>
+                    <li>Someone at the PE firm manually consolidates it with data from other portfolio companies</li>
+                </ol>
+                <p style="margin-top: 1.5rem;"><strong>By the time analysis is complete, the data is already stale. And the manual handling introduces errors.</strong></p>
+            </div>
+
+            <h3>The Time Tax</h3>
+            <p>More than <span class="data-highlight">50%</span> of respondents believe they waste considerable time and resources dealing with data because of manual processes and outdated systems.</p>
+            <p>This is not an abstract inefficiency. It is a direct cost. Finance teams spend hours on data wrangling instead of analysis. Operating partners make decisions based on information that is weeks old. Opportunities to intervene early in underperforming companies are missed.</p>
+
+            <h3>Why This Matters for Value Creation</h3>
+            <p>Value creation plans depend on accurate, timely visibility into portfolio company performance. If an operating partner cannot see that a portfolio company's gross margin is declining until the quarterly board deck arrives, they have lost weeks of potential intervention time.</p>
+            <p>The firms with real-time or near-real-time portfolio visibility can identify problems earlier, course-correct faster, and demonstrate value creation with defensible evidence.</p>
+        </section>
+
+        <section id="due-diligence">
+            <h2>Problem Two: Due Diligence Failures</h2>
+
+            <h3>The 70-90% Statistic</h3>
+            <p>Studies indicate that <span class="data-highlight">70-90%</span> of M&A deals fail to meet expectations. Flawed due diligence is frequently cited as a contributing factor.</p>
+            <p>This is not primarily a problem of missing documents. It is a problem of data quality.</p>
+
+            <h3>What Buyers Actually Find</h3>
+            <p>When sophisticated buyers conduct due diligence, they regularly encounter:</p>
+
+            <div class="glass-card">
+                <h4>Poor customer master data</h4>
+                <p style="margin-bottom: 0;">Incomplete records. Inaccurate contact information. Inconsistent naming conventions that make it impossible to determine how many unique customers a company actually has.</p>
+            </div>
+
+            <div class="glass-card">
+                <h4>Data room chaos</h4>
+                <p style="margin-bottom: 0;">Mislabeled documents. Multiple versions of the same file without clear dating. Missing key information that requires follow-up requests, extending timelines and raising concerns.</p>
+            </div>
+
+            <div class="glass-card">
+                <h4>Metrics that do not reconcile</h4>
+                <p style="margin-bottom: 0;">Revenue figures in the CRM that do not match revenue in the ERP. Customer counts that depend on how you define "customer." Churn rates calculated differently by different teams.</p>
+            </div>
+
+            <div class="glass-card">
+                <h4>GTM data that requires interpretation</h4>
+                <p style="margin-bottom: 0;">Go-to-market datasets that include fields requiring specialized knowledge to understand. Sales pipeline data with inconsistent stage definitions. Marketing attribution that cannot be validated.</p>
+            </div>
+
+            <h3>The Valuation Impact</h3>
+            <p>A firm that pays $500 million for an asset worth only $300 million suffers a tangible <span class="data-highlight">$200 million</span> loss. This is not hypothetical. Overpayment due to data-quality-driven valuation errors happens regularly.</p>
+            <p>On the sell side, the impact is equally significant. Buyers who discover data quality problems during diligence use them as leverage to negotiate price reductions. A company that could have sold for 8x EBITDA may end up selling for 6x because the buyer prices in the risk of numbers they cannot trust.</p>
+
+            <h3>The Hidden Cost: Deal Velocity</h3>
+            <p>Data problems slow deals down. Every data quality issue that requires explanation extends the diligence timeline. Extended timelines create opportunities for market conditions to change, for competing bidders to emerge, or for buyer enthusiasm to cool.</p>
+
+            <div class="pull-quote">
+                Sellers with clean, well-organized data close faster and at higher valuations.
+            </div>
+        </section>
+
+        <section id="exit-readiness">
+            <h2>Problem Three: Exit Readiness Gaps</h2>
+
+            <h3>The Last-Minute Scramble</h3>
+            <p>Most companies do not think about exit readiness until a transaction is imminent. A banker comes in, asks for data room materials, and suddenly everyone discovers that the company cannot produce defensible metrics.</p>
+            <p>By then it is too late to fix the underlying problems. The best the company can do is paper over gaps with explanations and hope buyers do not dig too deep.</p>
+
+            <h3>What "Diligence Ready" Actually Means</h3>
+            <p>A diligence-ready company can produce the following without heroic effort:</p>
+            <ul>
+                <li><strong>Clean customer and revenue data.</strong> A single source of truth for who the customers are, what they pay, and how that has changed over time. Customer counts, revenue by segment, cohort retention, all reconciled and defensible.</li>
+                <li><strong>Operational metrics with clear definitions.</strong> If the company reports gross margin, there is documentation of exactly what is included and excluded. If the company reports customer acquisition cost, the methodology is consistent and auditable.</li>
+                <li><strong>Financial data that ties to source systems.</strong> Revenue in the board deck matches revenue in the ERP matches revenue in the CRM. Any differences can be explained and documented.</li>
+                <li><strong>Historical data with lineage.</strong> Not just current state, but the ability to show how metrics have evolved over time, with confidence that historical figures were calculated consistently.</li>
+            </ul>
+
+            <h3>The AI Readiness Connection</h3>
+            <p>Exit readiness and AI readiness require the same foundation: clean, consolidated, well-governed data.</p>
+            <p>A company that can produce defensible metrics for a buyer can also feed reliable data into AI models. A company with fragmented, inconsistent data cannot do either.</p>
+            <p>This means the investment in data readiness pays off twice: once when AI initiatives can actually be deployed, and again when the company goes to market.</p>
+        </section>
+
+        <section id="cost-of-inaction">
+            <h2>The Cost of Inaction</h2>
+
+            <h3>Direct Costs</h3>
+            <ul>
+                <li><strong>Valuation haircuts.</strong> Buyers who discover data problems price in risk. A 10-20% reduction on a $100M transaction is $10-20M left on the table.</li>
+                <li><strong>Extended deal timelines.</strong> Every week a deal is delayed costs money in advisory fees, management distraction, and market risk.</li>
+                <li><strong>Failed transactions.</strong> Deals that fall apart due to diligence findings waste months of effort and create reputational risk.</li>
+            </ul>
+
+            <h3>Indirect Costs</h3>
+            <ul>
+                <li><strong>Delayed AI initiatives.</strong> Firms that cannot get their data in order cannot deploy AI capabilities that competitors are using to gain operational advantage.</li>
+                <li><strong>Slower decision making.</strong> Operating partners working with stale, incomplete data make slower and worse decisions than those with real-time visibility.</li>
+                <li><strong>Team burnout.</strong> Finance teams spending 50%+ of their time on manual data wrangling are not doing higher-value analysis work.</li>
+            </ul>
+
+            <h3>The Compounding Effect</h3>
+            <p>These costs compound. A portfolio company with poor data infrastructure will have worse operating decisions, slower AI adoption, and lower exit valuation than a comparable company with clean data.</p>
+
+            <div class="pull-quote">
+                Over a typical 5-year hold period, the cumulative impact can be measured in tens of millions of dollars of unrealized value.
+            </div>
+        </section>
+
+        <section id="framework">
+            <h2>The Data Readiness Hierarchy</h2>
+            <p>Fixing data problems does not require multi-year transformation programs. It requires focus on the right priorities in the right sequence.</p>
+
+            <div class="hierarchy">
+                <div class="hierarchy-level">
+                    <div class="level-number">1</div>
+                    <div class="level-header">
+                        <span class="level-title">Visibility</span>
+                        <span class="level-timeline">4-8 weeks</span>
+                    </div>
+                    <div class="level-content">
+                        <p><strong>Goal:</strong> Operating partners can see portfolio company performance without manual data collection.</p>
+                        <p><strong>Key interventions:</strong> Standardized metric definitions, automated data collection, portfolio dashboard with consistent, timely data.</p>
+                        <p><strong>Signal of success:</strong> Operating partners no longer need to request spreadsheets to understand portfolio performance.</p>
+                    </div>
+                </div>
+
+                <div class="hierarchy-level">
+                    <div class="level-number">2</div>
+                    <div class="level-header">
+                        <span class="level-title">Quality</span>
+                        <span class="level-timeline">8-12 weeks</span>
+                    </div>
+                    <div class="level-content">
+                        <p><strong>Goal:</strong> Data is accurate, complete, and reconciled across systems.</p>
+                        <p><strong>Key interventions:</strong> Customer master data audit, revenue reconciliation across CRM/ERP/financial reporting, documented metric definitions and methodologies.</p>
+                        <p><strong>Signal of success:</strong> Any metric can be traced from the board deck back to source systems with full documentation.</p>
+                    </div>
+                </div>
+
+                <div class="hierarchy-level">
+                    <div class="level-number">3</div>
+                    <div class="level-header">
+                        <span class="level-title">Diligence Readiness</span>
+                        <span class="level-timeline">4-8 weeks</span>
+                    </div>
+                    <div class="level-content">
+                        <p><strong>Goal:</strong> Company can populate a data room and answer buyer questions without scrambling.</p>
+                        <p><strong>Key interventions:</strong> Standardized data room templates, documentation for all key metrics, ongoing data governance processes.</p>
+                        <p><strong>Signal of success:</strong> A mock diligence request can be fulfilled within 48 hours.</p>
+                    </div>
+                </div>
+
+                <div class="hierarchy-level">
+                    <div class="level-number">4</div>
+                    <div class="level-header">
+                        <span class="level-title">AI Readiness</span>
+                        <span class="level-timeline">Varies</span>
+                    </div>
+                    <div class="level-content">
+                        <p><strong>Goal:</strong> Data infrastructure can support AI and advanced analytics initiatives.</p>
+                        <p><strong>Key interventions:</strong> Consolidated data repositories, data quality monitoring, documentation and governance for AI model training data.</p>
+                        <p><strong>Signal of success:</strong> AI initiatives can be deployed without data being the bottleneck.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="where-to-start">
+            <h2>Where to Start</h2>
+            <p>Most firms do not need to solve every data problem at once. The right starting point depends on where the pain is most acute:</p>
+            <ul>
+                <li><strong>If operating partners are flying blind:</strong> Start with Level 1. Get visibility first.</li>
+                <li><strong>If a transaction is approaching:</strong> Start with Level 3. Get diligence-ready quickly, then backfill the foundation.</li>
+                <li><strong>If AI initiatives are stalling:</strong> Assess where the data gaps are and work backward to the prerequisite level.</li>
+                <li><strong>If you are not sure:</strong> A focused diagnostic can identify the single biggest constraint and the highest-leverage intervention.</li>
+            </ul>
+        </section>
+
+        <section id="conclusion">
+            <h2>Conclusion</h2>
+            <p>Private equity's data problems are not new. But the 2026 environment has made them more costly.</p>
+            <p>Exit valuations are under pressure. LP scrutiny is increasing. AI capabilities are creating competitive separation between firms that can deploy them and firms that cannot.</p>
+            <p>The firms that address their data infrastructure now will exit companies at higher valuations, make better operating decisions, and deploy AI capabilities ahead of competitors.</p>
+            <p>The firms that wait will discover their data problems at the worst possible time: when a buyer finds them during diligence.</p>
+        </section>
+
+        <div class="cta-section">
+            <h3>Assess Your Data Readiness</h3>
+            <p>A focused diagnostic can identify the single biggest data constraint and the highest-leverage intervention for your portfolio company.</p>
+            <a href="mailto:graeme@crawfordmcmillan.com?subject=Data%20Readiness%20Assessment" class="cta-button">
+                <span>Contact Graeme Crawford</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <img src="assets/logo.png" alt="Crawford McMillan" height="48" class="footer-logo-img">
+        <div class="footer-tagline">Data Strategy and Transformation</div>
+        <div class="footer-links">
+            <a href="https://crawfordmcmillan.com">crawfordmcmillan.com</a>
+        </div>
+    </footer>
+
+    <script>
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 2 + 'px';
+            cursorDot.style.top = e.clientY - 2 + 'px';
+        });
+
+        // Cursor hover effect
+        document.querySelectorAll('a, button, .stat-card, .glass-card, .hierarchy-level, .toc-dot').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Scroll progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+
+            // TOC progress
+            const tocProgress = document.getElementById('toc-progress');
+            if (tocProgress) {
+                tocProgress.style.height = scrolled + '%';
+            }
+        });
+
+        // Intersection Observer for scroll animations
+        const sections = document.querySelectorAll('section');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        // TOC dot navigation
+        const tocDots = document.querySelectorAll('.toc-dot');
+        tocDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const sectionId = dot.dataset.section;
+                document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Active TOC dot
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    tocDots.forEach(dot => dot.classList.remove('active'));
+                    const activeDot = document.querySelector(`.toc-dot[data-section="${entry.target.id}"]`);
+                    if (activeDot) activeDot.classList.add('active');
+                }
+            });
+        }, { threshold: 0.3, rootMargin: '-100px 0px -50% 0px' });
+
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // Parallax effect on blobs
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            document.querySelectorAll('.blob').forEach((blob, i) => {
+                const speed = (i + 1) * 0.05;
+                blob.style.transform = `translateY(${scrollY * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
