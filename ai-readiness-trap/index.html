@@ -1555,7 +1555,7 @@
                     <div class="quiz-result-label">out of 14</div>
                     <div class="quiz-result-title" id="quizResultTitle"></div>
                     <div class="quiz-result-desc" id="quizResultDesc"></div>
-                    <a href="mailto:graeme@crawfordmcmillan.com?subject=AI%20Readiness%20Assessment%20Follow-up" class="quiz-result-cta">Get a Full Assessment</a>
+                    <a href="https://crawfordmcmillan.com/contact/" target="_blank" class="quiz-result-cta" id="quizResultCta">Get Your Free Assessment</a>
                     <button class="quiz-restart" onclick="restartQuiz()">Take again</button>
                 </div>
             </div>
@@ -1667,6 +1667,10 @@
             scoreEl.className = 'quiz-result-score ' + scoreClass;
             titleEl.textContent = result;
             descEl.textContent = desc;
+
+            // Update CTA link with score context
+            const ctaEl = document.getElementById('quizResultCta');
+            ctaEl.href = 'https://crawfordmcmillan.com/contact/?ref=ai-readiness&score=' + total + '&tier=' + encodeURIComponent(result);
         }
 
         function restartQuiz() {
